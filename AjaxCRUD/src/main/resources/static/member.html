@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>member</title>
+<script src="http://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+let currentPage = 1;
+
+$(document).ready(function(){
+	$('#btnPrevious').attr(disable,true);
+	$('#btnNext').attr(disable,true);
+    // 삭제
+    $('#btnRemove').on('click',function(){				// $('#btnRemove').click() 라고 적어도 된다
+    	let ck = new Array();							// let ck = [];
+        $('.ck:checked').each(function(index,item){		// ck중에 체크되어있는 것만 가져오자
+            ck.push($(item).val());						// item들을 새로생성한 빈 배열인 변수ck 뒤에  넣을 것
+        });
+    	
+    	console.log('#btnRemove click');
+    	
+    	$.ajax({
+    		url: '/removeMembers'
+    		,type:'POST'
+    		,data:{'ck':ck}
+    		,success:function(data){
+                $('#btnList').trigger('click');
+            	console.log('삭제 성공 시 list 자동출력');
+            }
+    	});
+    });
+ 
+    // 추가
+    $('#btnAdd').on('click',function(){
+    	console.log('#btnAdd click');
+		// 유효성 검사
+		// 공백일 시
+			if($('#id').val() == ''){
+				alert("id를 입력하세요");
+			}else if($('#pw').val() == ''){
+				alert("pw를 입력하세요");
+			}else if($('#name').val() == ''){
+				alert("name을 입력하세요");
+			}else if($('#age').val() == ''){
+				alert("age를 입력하세요. 숫자만 입력 가능합니다");
+			}else if($('#gender').val() == ''){
+				alert("gender를 입력하세요");
+			}
+			// 모든 값이 입력되었을 경우
+			else{
+				 let id = $('#id').val();
+				 let pw = $('#pw').val();
+				 let name = $('#name').val();
+				 let age = $('#age').val();
+				 let gender = $('#gender').val();
+
+				$.ajax({
+					url: '/addMembers'
+					,type:'POST'
+				   	,data: {'id':id, 'pw':pw, 'name':name, 'age':age, 'gender':gender}
+					,success: function(){
+						// 입력 성공했을 시 자동으로 btnList이 눌리도록 하자
+						$('#btnList').trigger('click');
+						console.log('추가 성공 시 list 자동출력');
+					}
+				});
+			}
+    });
+
+    
+    // 수정
+    $('#btnModify').on('click',function(){
+		// 유효성 검사
+		// 공백일 시
+			if($('#id').val() == ''){
+				alert("id를 입력하세요");
+			}else if($('#pw').val() == ''){
+				alert("pw를 입력하세요");
+			}else if($('#name').val() == ''){
+				alert("name을 입력하세요");
+			}else if($('#age').val() == ''){
+				alert("age를 입력하세요. 숫자만 입력 가능합니다");
+			}else if($('#gender').val() == ''){
+				alert("gender를 입력하세요");
+			}
+			// 모든 값이 입력되었을 경우
+			else{
+				 let id = $('#id').val();
+				 let pw = $('#pw').val();
+				 let name = $('#name').val();
+				 let age = $('#age').val();
+				 let gender = $('#gender').val();
+				 
+				 console.log('#btnModify click');
+				 
+				 $.ajax({
+		    		url: '/modifyMembers'
+		    		,type:'POST'
+		        	,data: {'id':id, 'pw':pw, 'name':name, 'age':age, 'gender':gender}
+		    		,success: function(){
+		    			// 입력 성공했을 시 자동으로 btnList이 눌리도록 하자
+		    			$('#btnList').trigger('click');
+		    			console.log('수정 성공 시 list 자동출력');
+		    		}
+		       	});
+			}
+    });
+    
+    // 목록
+    $('#btnList').on('click',function(){
+    	console.log('#btnList click');
+    	$.ajax({
+    		url: '/getMembers'
+    		,type: 'GET'
+    		,success: function(data){	// data => json member list
+                    $('#list').empty();			// list 내부에 뭔가 있으면 지우고 추가해라
+                    $(data).each(function(index,item){
+                        $('#list').append('<tr>');
+                        $('#list').append('<td><input type="checkbox" class="ck" value="'+item.id+'"></td>');
+                        $('#list').append('<td>'+item.id+'</td>');
+                        $('#list').append('<td>'+item.pw+'</td>');
+                        $('#list').append('<td>'+item.name+'</td>');
+                        $('#list').append('<td>'+item.age+'</td>');
+                        $('#list').append('<td>'+item.gender+'</td>');
+                        $('#list').append('</tr>');
+                    });
+                }
+    	});
+	});
+    $('#btnList').trigger('click');
+    console.log('사이트 접속 시 list 자동출력');
+});
+</script>
+</head>
+	<h1>Member</h1>	
+<body>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>pw</th>
+                <th>name</th>
+                <th>age</th>
+                <th>gender</th>
+                <th>추가</th>
+                <th>수정</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" id="id"></td>
+                <span id="helper1"></span>
+                <td><input type="password" id="pw"></td>
+                <td><input type="text" id="name"></td>
+                <td><input type="text" id="age"></td>
+                <td>
+                    <select id="gender">
+                        <option value="Male">남</option>
+                        <option value="Female">여</option>
+                    </select>
+                </td>
+                <td><button type="button" id="btnAdd">add</button></td>
+                <td><button type="button" id="btnModify">modify</button></td>
+            </tr>
+        </tbody>
+    </table>
+ 
+    <button type="button" id="btnList">회원리스트</button>
+    <button type="button" id="btnRemove">remove</button>
+    <table border="1">
+        <thead>
+            <tr>
+                <th></th>
+                <th>id</th>
+                <th>pw</th>
+                <th>name</th>
+                <th>age</th>
+                <th>gender</th>
+            </tr>
+        </thead>
+        <tbody id="list">
+        </tbody>
+    </table> 
+    
+    <span id="btnPrevious">
+		<btnPrevious type=""></btn>
+	</span>   
+	<span id="btnNext">
+	<btnPrevious type=""></btn>
+	</span>
+</body>
+</html>
