@@ -1,6 +1,6 @@
 package cafe.jjdev.ajaxcrud.member.controller;
 
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,23 +8,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import cafe.jjdev.ajaxcrud.member.mapper.MemberMapper;
 import cafe.jjdev.ajaxcrud.member.service.MemberService;
 import cafe.jjdev.ajaxcrud.member.vo.Member;
 
 @RestController
 public class MemberController {
 	
-	@Autowired private MemberMapper memberMapper;
 	@Autowired private MemberService memberService;
 	
 	// 회원목록 출력, 페이징
 	@GetMapping("/getMembers")
-	public List<Member> getMembers(@RequestParam(value="currentPage", required=true) int currentPage){
-		List<Member> list = memberService.getMemberList(currentPage); 
+	public Map<String, Object> getMembers(@RequestParam(value="currentPage", required=true) int currentPage){
 		System.out.println("[MemberController GET getMembers 요청]");
-		System.out.println("[getMembers] memberMapper.selectMemberList().size : "+list.size());
-		return list;		
+		System.out.println("[getMembers] currentPage : "+currentPage);
+		
+		// memberService의 getMemberList 호출
+		Map<String, Object> map = memberService.getMemberList(currentPage); 
+		return map;		
 	}
 	
 	// 회원추가
@@ -43,7 +43,7 @@ public class MemberController {
 		System.out.println("[MemberController GET removeMembers] remove ck : " +ck);	// ck가 있는 경우 ck.length 출력하자
 		System.out.println("[MemberController GET removeMembers] ck.length : " +ck.length);
 		
-		String[] check = memberService.removeMember(ck);	
+		memberService.removeMember(ck);	
 	}
 	
 	// 회원수정

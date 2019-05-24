@@ -46,13 +46,13 @@ public class MemberService {
 	}
 	
 	// 회원추가
-	public int addMember(Member member) {
+	public void addMember(Member member) {
 		System.out.println("[MemberService addMember 요청]");
-		return memberMapper.insertMember(member);
+		memberMapper.insertMember(member);
 	}
 	
 	// 회원삭제
-	public String[] removeMember(String[] ck) {
+	public void removeMember(String[] ck) {
 		System.out.println("[MemberService removeMember 요청]");
 		System.out.println("[MemberService removeMember] service ck : "+ck);
 		System.out.println("[MemberService removeMember]");
@@ -63,12 +63,11 @@ public class MemberService {
 			member.setId(id);
 			memberMapper.deleteMember(member);
 		}
-		return ck;	
 	}
 	
 	// 회원수정
-	public int modifyMember(Member member) {
-		return memberMapper.updateMember(member);
+	public void modifyMember(Member member) {
+		memberMapper.updateMember(member);
 	}
 
 }
