@@ -39,7 +39,7 @@ public class MemberService {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		returnMap.put("list", list);
 		returnMap.put("lastPage", lastPage);
-		returnMap.put("memberCount", memberCount);
+		returnMap.put("currentPage", currentPage);
 		System.out.println("[MemberService getMemberList] lastPage : "+ lastPage);
 		
 		return returnMap;

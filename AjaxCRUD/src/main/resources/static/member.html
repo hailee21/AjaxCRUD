@@ -5,11 +5,10 @@
 <title>member</title>
 <script src="http://code.jquery.com/jquery-3.4.1.js"></script>
 <script>
-let currentPage = 1;
-
 $(document).ready(function(){
-	$('#btnPrevious').attr(disable,true);
-	$('#btnNext').attr(disable,true);
+	// 페이징을 위한 전역변수 선언
+	let currentPage = 1;
+	
     // 삭제
     $('#btnRemove').on('click',function(){				// $('#btnRemove').click() 라고 적어도 된다
     	let ck = new Array();							// let ck = [];
@@ -112,9 +111,13 @@ $(document).ready(function(){
     	$.ajax({
     		url: '/getMembers'
     		,type: 'GET'
+    		,data: {'currentPage':currentPage}
     		,success: function(data){	// data => json member list
                     $('#list').empty();			// list 내부에 뭔가 있으면 지우고 추가해라
-                    $(data).each(function(index,item){
+                    $('#btnPrevious').hide();
+                    $('#btnNext').hide();
+                    
+                    $(data.list).each(function(index,item){
                         $('#list').append('<tr>');
                         $('#list').append('<td><input type="checkbox" class="ck" value="'+item.id+'"></td>');
                         $('#list').append('<td>'+item.id+'</td>');
@@ -124,11 +127,36 @@ $(document).ready(function(){
                         $('#list').append('<td>'+item.gender+'</td>');
                         $('#list').append('</tr>');
                     });
+                    
+                    // map에서 lastPage 가져오기
+                    lastPage = (data.lastPage);
+                    console.log("마지막 페이지:"+lastPage);
+                    if(currentPage>1){
+                    	$('#btnPrevious').show();
+                    }
+                    if(currentPage<lastPage){
+                    	$('#btnNext').show();
+                    }
                 }
     	});
 	});
+    // 페이지 접속 시 list 자동 출력
     $('#btnList').trigger('click');
     console.log('사이트 접속 시 list 자동출력');
+    
+    // 이전페이지 
+    $('#btnPrevious').click(function(){
+    	currentPage = currentPage-1;
+    	console.log('이전 버튼 클릭... currentPage : '+ currentPage);
+    	$('#btnList').trigger('click');
+    	
+    });
+    // 다음페이지
+    $('#btnNext').click(function(){
+    	currentPage = currentPage+1;
+    	console.log('다음 버튼 클릭... currentPage : '+ currentPage);
+    	$('#btnList').trigger('click');
+    });
 });
 </script>
 </head>
@@ -180,13 +208,10 @@ $(document).ready(function(){
         </thead>
         <tbody id="list">
         </tbody>
-    </table> 
-    
-    <span id="btnPrevious">
-		<btnPrevious type=""></btn>
-	</span>   
-	<span id="btnNext">
-	<btnPrevious type=""></btn>
-	</span>
+    </table>     
+    <div id="pager">
+    	<button type="button" id="btnPrevious">이전</button>
+    	<button type="button" id="btnNext">다음</button>
+    </div>
 </body>
 </html>
