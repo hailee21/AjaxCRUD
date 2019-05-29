@@ -142,23 +142,20 @@ $(document).ready(function(){
     
 	
     // 수정  --------------------------------------------------------------------------------------------------
-    $('#btnModify').on('click',function(){
-    	 // 유효성검사 - 공백일 시 뜨는 문자열
+    // 유효성검사 - 공백일 시 뜨는 문자열
         if($('#id').val() == ''){
     		$('#helper1').text("id를 입력하세요. 4-10자 이내여야 합니다");
-    	}if($('#pw').val() == ''){
+    	}
+    	if($('#pw').val() == ''){
     		$('#helper2').text("pw를 입력하세요. 최소 8 자, 최소 하나의 문자 및 하나의 숫자.");
-    	}if($('#name').val() == ''){
+    	}
+    	if($('#name').val() == ''){
     		$('#helper3').text("이름을 입력하세요. 영문또는 한글을 입력하셔야 합니다");
-    	}if($('#age').val() == ''){
+    	}
+    	if($('#age').val() == ''){
     		$('#helper4').text("age를 입력하세요. 숫자만 입력 가능합니다");
     	}
     	
-    	// 유효성 검사를 위한 정규식
-    	let idCheck = /[가-힣A-Za-z\d]{4,10}$/; // 최소4자, 최대 10자의 문자
-    	let pwCheck = /(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; //최소 8 자, 최소 하나의 문자 및 하나의 숫자
-    	let numberCheck = /[0-9]/;	// 숫자인경우
-    	let nameCheck = /[a-zA-Z가-힣]/; // 한글, 영어만 
     	// 아이디 검사 (정규식없이)
     	$('#id').keyup(function(){
     		console.log($('#id').val());
@@ -202,8 +199,8 @@ $(document).ready(function(){
     		}
     	});
     	// 버튼 클릭했을 시 유효성 검사
-        $('#btnAdd').on('click',function(){
-        	console.log('#btnAdd click');
+         $('#btnModify').on('click',function(){
+        	console.log('#btnModify click');
     		// 입력된 값이 공백일 시
     			if($('#id').val() == ''){
     				alert("id가 공백입니다. 입력하세요");
@@ -281,7 +278,7 @@ $(document).ready(function(){
                     	$('#btnNext').show();
                     }
                 }
-    	});
+    	});	
 	});
     
     // 페이지 접속 시 list 자동 출력
@@ -301,6 +298,8 @@ $(document).ready(function(){
     	console.log('다음 버튼 클릭... currentPage : '+ currentPage);
     	$('#btnList').trigger('click');
     });
+
+   
 });
 </script>
 </head>
