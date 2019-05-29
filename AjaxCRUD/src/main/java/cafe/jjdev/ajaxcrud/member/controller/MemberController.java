@@ -36,6 +36,15 @@ public class MemberController {
 		memberService.addMember(member);
 	}
 	
+	// 아이디 중복검사 / 수정 검사
+	@PostMapping("/idOverCheck")
+	public boolean idOverCheck(@RequestParam (value="id", required=true) String memberId) {
+		System.out.println("[MemberController POST idOverCheck 요청]");
+		System.out.println("[MemberController POST idOverCheck] memberId : "+memberId);
+				
+		return memberService.idOverCheck(memberId);
+	}	
+	
 	// 회원삭제
 	@PostMapping("/removeMembers")
 	public void removeMembers(@RequestParam (value="ck[]") String[] ck){				// spring은  List<String> ck 알아서 배열로 바꿔줄 것

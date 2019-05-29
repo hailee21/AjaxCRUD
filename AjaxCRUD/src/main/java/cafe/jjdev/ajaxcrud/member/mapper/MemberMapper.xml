@@ -60,4 +60,13 @@
 			, gender = #{gender}		
 		WHERE id = #{id}
 	</update>
+	<!-- 회원수정을 위한 아이디 조회  -->
+	<select id="selectMember"
+			parameterType="String"
+			resultType="cafe.jjdev.ajaxcrud.member.vo.Member">
+		SELECT 
+			id
+		FROM member
+		where id=#{id}
+	</select>
 </mapper>

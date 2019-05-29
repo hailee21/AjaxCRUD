@@ -22,4 +22,6 @@ public interface MemberMapper {
 	
 	// 회원수정
 	public int updateMember(Member member);
+	// 회원수정을 위한 아이디 조회
+	public Member selectMember(String memberId);
 }

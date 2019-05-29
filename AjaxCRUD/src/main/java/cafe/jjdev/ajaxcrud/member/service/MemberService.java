@@ -50,6 +50,16 @@ public class MemberService {
 		System.out.println("[MemberService addMember 요청]");
 		memberMapper.insertMember(member);
 	}
+	// 아이디 중복검사
+	public boolean idOverCheck(String memberId) {
+		System.out.println("[MemberService idOverCheck 요청]");
+		boolean idCheck = false; 
+		// 만약 id가 존재하는 경우라면 새로운 객체가 생성될 것
+		if(memberMapper.selectMember(memberId) != null) {
+			idCheck = true;
+		}
+		return idCheck;		
+	}
 	
 	// 회원삭제
 	public void removeMember(String[] ck) {

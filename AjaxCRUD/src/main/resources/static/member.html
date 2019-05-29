@@ -64,6 +64,27 @@ $(document).ready(function(){
 			$('#helper1').text("사용가능합니다.");
 		}
 	});
+	// 아이디 중복검사 (Ajax)
+	$('#id').blur(function(){
+		console.log("수정 blur: "+$('#id').val());
+		
+		let id = $('#id').val();
+		$.ajax({
+    		url: '/idOverCheck'
+    		,type:'POST'
+        	,data: {'id':id}
+    		,success: function(data){
+    			// boolean 리턴데이터타입으로 리턴받은 값이 true이면 if문을, false이면 else문을 실행한다.   
+    			if(data){
+    				$('#helper').attr('style','color:red');
+    				$('#helper1').text("일치하는 아이디를 찾았습니다. 회원가입의 경우 다른 아이디를 입력하여주십시오");
+    			}else{
+    				$('#helper').attr('style','color:red');
+    				$('#helper1').text("존재하지않는아이디입니다");
+    			}
+    		}
+       	});
+	});
 	// 비밀번호 검사
 	$('#pw').keyup(function(){
 		console.log($('#pw').val());
@@ -142,62 +163,6 @@ $(document).ready(function(){
     
 	
     // 수정  --------------------------------------------------------------------------------------------------
-    // 유효성검사 - 공백일 시 뜨는 문자열
-        if($('#id').val() == ''){
-    		$('#helper1').text("id를 입력하세요. 4-10자 이내여야 합니다");
-    	}
-    	if($('#pw').val() == ''){
-    		$('#helper2').text("pw를 입력하세요. 최소 8 자, 최소 하나의 문자 및 하나의 숫자.");
-    	}
-    	if($('#name').val() == ''){
-    		$('#helper3').text("이름을 입력하세요. 영문또는 한글을 입력하셔야 합니다");
-    	}
-    	if($('#age').val() == ''){
-    		$('#helper4').text("age를 입력하세요. 숫자만 입력 가능합니다");
-    	}
-    	
-    	// 아이디 검사 (정규식없이)
-    	$('#id').keyup(function(){
-    		console.log($('#id').val());
-    		if($('#id').val().length < 4){
-    			$('#helper1').text("4자 이상이어야 합니다");
-    		}if($('#id').val().length > 10){
-    			$('#helper1').text("10자 이내여야 합니다");
-    		}if($('#id').val().length>=4 && $('#id').val().length<=10){
-    			$('#helper1').text("사용가능합니다.");
-    		}
-    	});
-    	// 비밀번호 검사
-    	$('#pw').keyup(function(){
-    		console.log($('#pw').val());
-    		if(!pwCheck.test($('#pw').val())){
-    			console.log("비밀번호 유효성 이상");	
-    			$('#helper2').text("최소 8 자, 최소 하나의 문자 및 하나의 숫자 입력");
-    		}else{
-    			console.log("비밀번호 입력가능");	
-    			$('#helper2').text("비밀번호사용가능합니다");
-    		}
-    	});
-    	// 이름 검사
-    	$('#name').keyup(function(){
-    		console.log($('#name').val());
-    		if(!nameCheck.test($('#name').val())){
-    			$('#helper3').text("문자만 입력하세요");
-    		}else{
-    			console.log("비밀번호 입력가능");	
-    			$('#helper3').text("이름 입력가능합니다");
-    		}
-    	});
-    	// 나이 검사
-    	$('#age').keyup(function(){
-    		console.log($('#age').val());
-    		if(!numberCheck.test($('#age').val())){
-    			$('#helper4').text("숫자만 입력하세요");
-    		}else{
-    			console.log("나이 입력가능");	
-    			$('#helper4').text("나이 입력가능합니다");
-    		}
-    	});
     	// 버튼 클릭했을 시 유효성 검사
          $('#btnModify').on('click',function(){
         	console.log('#btnModify click');
