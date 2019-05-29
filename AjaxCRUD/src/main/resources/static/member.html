@@ -9,7 +9,7 @@ $(document).ready(function(){
 	// 페이징을 위한 전역변수 선언
 	let currentPage = 1;
 	
-    // 삭제
+    // 삭제 --------------------------------------------------------------------------------------------------
     $('#btnRemove').on('click',function(){				// $('#btnRemove').click() 라고 적어도 된다
     	let ck = new Array();							// let ck = [];
         $('.ck:checked').each(function(index,item){		// ck중에 체크되어있는 것만 가져오자
@@ -18,32 +18,106 @@ $(document).ready(function(){
     	
     	console.log('#btnRemove click');
     	
-    	$.ajax({
-    		url: '/removeMembers'
-    		,type:'POST'
-    		,data:{'ck':ck}
-    		,success:function(data){
-                $('#btnList').trigger('click');
-            	console.log('삭제 성공 시 list 자동출력');
-            }
-    	});
+    	// 유효성검사
+    	// 체크박스 공백이 아닐 시 
+    	if($('.ck:checked').val() != null){           
+            $.ajax({
+        		url: '/removeMembers'
+        		,type:'POST'
+        		,data:{'ck':ck}
+        		,success:function(data){
+                    $('#btnList').trigger('click');
+                	console.log('삭제 성공 시 list 자동출력');
+                }
+        	});
+        // 공백일 경우    
+    	}else {
+    		alert("삭제할 계정을 선택하세요!");
+    	}
     });
  
-    // 추가
+    // 추가  --------------------------------------------------------------------------------------------------
+    // 유효성검사 - 공백일 시 뜨는 문자열
+    if($('#id').val() == ''){
+		$('#helper1').text("id를 입력하세요. 4-10자 이내여야 합니다");
+	}if($('#pw').val() == ''){
+		$('#helper2').text("pw를 입력하세요. 최소 8 자, 최소 하나의 문자 및 하나의 숫자.");
+	}if($('#name').val() == ''){
+		$('#helper3').text("이름을 입력하세요. 영문또는 한글을 입력하셔야 합니다");
+	}if($('#age').val() == ''){
+		$('#helper4').text("age를 입력하세요. 숫자만 입력 가능합니다");
+	}
+	
+	// 유효성 검사를 위한 정규식
+	let idCheck = /[가-힣A-Za-z\d]{4,10}$/; // 최소4자, 최대 10자의 문자
+	let pwCheck = /(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; //최소 8 자, 최소 하나의 문자 및 하나의 숫자
+	let numberCheck = /[0-9]/;	// 숫자인경우
+	let nameCheck = /[a-zA-Z가-힣]/; // 한글, 영어만 
+	// 아이디 검사 (정규식없이)
+	$('#id').keyup(function(){
+		console.log($('#id').val());
+		if($('#id').val().length < 4){
+			$('#helper1').text("4자 이상이어야 합니다");
+		}if($('#id').val().length > 10){
+			$('#helper1').text("10자 이내여야 합니다");
+		}if($('#id').val().length>=4 && $('#id').val().length<=10){
+			$('#helper1').text("사용가능합니다.");
+		}
+	});
+	// 비밀번호 검사
+	$('#pw').keyup(function(){
+		console.log($('#pw').val());
+		if(!pwCheck.test($('#pw').val())){
+			console.log("비밀번호 유효성 이상");	
+			$('#helper2').text("최소 8 자, 최소 하나의 문자 및 하나의 숫자 입력");
+		}else{
+			console.log("비밀번호 입력가능");	
+			$('#helper2').text("비밀번호사용가능합니다");
+		}
+	});
+	// 이름 검사
+	$('#name').keyup(function(){
+		console.log($('#name').val());
+		if(!nameCheck.test($('#name').val())){
+			$('#helper3').text("문자만 입력하세요");
+		}else{
+			console.log("비밀번호 입력가능");	
+			$('#helper3').text("이름 입력가능합니다");
+		}
+	});
+	// 나이 검사
+	$('#age').keyup(function(){
+		console.log($('#age').val());
+		if(!numberCheck.test($('#age').val())){
+			$('#helper4').text("숫자만 입력하세요");
+		}else{
+			console.log("나이 입력가능");	
+			$('#helper4').text("나이 입력가능합니다");
+		}
+	});
+	// 버튼 클릭했을 시 유효성 검사
     $('#btnAdd').on('click',function(){
     	console.log('#btnAdd click');
-		// 유효성 검사
-		// 공백일 시
+		// 입력된 값이 공백일 시
 			if($('#id').val() == ''){
-				alert("id를 입력하세요");
+				alert("id가 공백입니다. 입력하세요");
 			}else if($('#pw').val() == ''){
-				alert("pw를 입력하세요");
+				alert("pw가 공백입니다. 입력하세요");
 			}else if($('#name').val() == ''){
-				alert("name을 입력하세요");
+				alert("name이 공백입니다. 입력하세요");
 			}else if($('#age').val() == ''){
-				alert("age를 입력하세요. 숫자만 입력 가능합니다");
+				alert("age가 공백입니다. 입력하세요");
 			}else if($('#gender').val() == ''){
-				alert("gender를 입력하세요");
+				alert("gender가 공백입니다. 입력하세요");
+			}
+			else if(!idCheck.test($('#id').val())){
+				alert("id 입력 조건에 맞게 다시 쓰세요");
+			}else if(!pwCheck.test($('#pw').val())){
+				alert("pw 입력 조건에 맞게 다시 쓰세요");
+			}else if(!nameCheck.test($('#name').val())){
+				alert("name 입력 조건에 맞게 다시 쓰세요");
+			}else if(!numberCheck.test($('#age').val())){
+				alert("age 입력 조건에 맞게 다시 쓰세요");
 			}
 			// 모든 값이 입력되었을 경우
 			else{
@@ -65,23 +139,92 @@ $(document).ready(function(){
 				});
 			}
     });
-
     
-    // 수정
+	
+    // 수정  --------------------------------------------------------------------------------------------------
     $('#btnModify').on('click',function(){
-		// 유효성 검사
-		// 공백일 시
-			if($('#id').val() == ''){
-				alert("id를 입력하세요");
-			}else if($('#pw').val() == ''){
-				alert("pw를 입력하세요");
-			}else if($('#name').val() == ''){
-				alert("name을 입력하세요");
-			}else if($('#age').val() == ''){
-				alert("age를 입력하세요. 숫자만 입력 가능합니다");
-			}else if($('#gender').val() == ''){
-				alert("gender를 입력하세요");
-			}
+    	 // 유효성검사 - 공백일 시 뜨는 문자열
+        if($('#id').val() == ''){
+    		$('#helper1').text("id를 입력하세요. 4-10자 이내여야 합니다");
+    	}if($('#pw').val() == ''){
+    		$('#helper2').text("pw를 입력하세요. 최소 8 자, 최소 하나의 문자 및 하나의 숫자.");
+    	}if($('#name').val() == ''){
+    		$('#helper3').text("이름을 입력하세요. 영문또는 한글을 입력하셔야 합니다");
+    	}if($('#age').val() == ''){
+    		$('#helper4').text("age를 입력하세요. 숫자만 입력 가능합니다");
+    	}
+    	
+    	// 유효성 검사를 위한 정규식
+    	let idCheck = /[가-힣A-Za-z\d]{4,10}$/; // 최소4자, 최대 10자의 문자
+    	let pwCheck = /(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; //최소 8 자, 최소 하나의 문자 및 하나의 숫자
+    	let numberCheck = /[0-9]/;	// 숫자인경우
+    	let nameCheck = /[a-zA-Z가-힣]/; // 한글, 영어만 
+    	// 아이디 검사 (정규식없이)
+    	$('#id').keyup(function(){
+    		console.log($('#id').val());
+    		if($('#id').val().length < 4){
+    			$('#helper1').text("4자 이상이어야 합니다");
+    		}if($('#id').val().length > 10){
+    			$('#helper1').text("10자 이내여야 합니다");
+    		}if($('#id').val().length>=4 && $('#id').val().length<=10){
+    			$('#helper1').text("사용가능합니다.");
+    		}
+    	});
+    	// 비밀번호 검사
+    	$('#pw').keyup(function(){
+    		console.log($('#pw').val());
+    		if(!pwCheck.test($('#pw').val())){
+    			console.log("비밀번호 유효성 이상");	
+    			$('#helper2').text("최소 8 자, 최소 하나의 문자 및 하나의 숫자 입력");
+    		}else{
+    			console.log("비밀번호 입력가능");	
+    			$('#helper2').text("비밀번호사용가능합니다");
+    		}
+    	});
+    	// 이름 검사
+    	$('#name').keyup(function(){
+    		console.log($('#name').val());
+    		if(!nameCheck.test($('#name').val())){
+    			$('#helper3').text("문자만 입력하세요");
+    		}else{
+    			console.log("비밀번호 입력가능");	
+    			$('#helper3').text("이름 입력가능합니다");
+    		}
+    	});
+    	// 나이 검사
+    	$('#age').keyup(function(){
+    		console.log($('#age').val());
+    		if(!numberCheck.test($('#age').val())){
+    			$('#helper4').text("숫자만 입력하세요");
+    		}else{
+    			console.log("나이 입력가능");	
+    			$('#helper4').text("나이 입력가능합니다");
+    		}
+    	});
+    	// 버튼 클릭했을 시 유효성 검사
+        $('#btnAdd').on('click',function(){
+        	console.log('#btnAdd click');
+    		// 입력된 값이 공백일 시
+    			if($('#id').val() == ''){
+    				alert("id가 공백입니다. 입력하세요");
+    			}else if($('#pw').val() == ''){
+    				alert("pw가 공백입니다. 입력하세요");
+    			}else if($('#name').val() == ''){
+    				alert("name이 공백입니다. 입력하세요");
+    			}else if($('#age').val() == ''){
+    				alert("age가 공백입니다. 입력하세요");
+    			}else if($('#gender').val() == ''){
+    				alert("gender가 공백입니다. 입력하세요");
+    			}
+    			else if(!idCheck.test($('#id').val())){
+    				alert("id 입력 조건에 맞게 다시 쓰세요");
+    			}else if(!pwCheck.test($('#pw').val())){
+    				alert("pw 입력 조건에 맞게 다시 쓰세요");
+    			}else if(!nameCheck.test($('#name').val())){
+    				alert("name 입력 조건에 맞게 다시 쓰세요");
+    			}else if(!numberCheck.test($('#age').val())){
+    				alert("age 입력 조건에 맞게 다시 쓰세요");
+    			}
 			// 모든 값이 입력되었을 경우
 			else{
 				 let id = $('#id').val();
@@ -105,7 +248,7 @@ $(document).ready(function(){
 			}
     });
     
-    // 목록
+    // 목록  --------------------------------------------------------------------------------------------------
     $('#btnList').on('click',function(){
     	console.log('#btnList click');
     	$.ajax({
@@ -140,18 +283,19 @@ $(document).ready(function(){
                 }
     	});
 	});
+    
     // 페이지 접속 시 list 자동 출력
     $('#btnList').trigger('click');
     console.log('사이트 접속 시 list 자동출력');
     
-    // 이전페이지 
+    // 이전페이지 (currentPage 감소)
     $('#btnPrevious').click(function(){
     	currentPage = currentPage-1;
     	console.log('이전 버튼 클릭... currentPage : '+ currentPage);
     	$('#btnList').trigger('click');
     	
     });
-    // 다음페이지
+    // 다음페이지 (currentPage 증가)
     $('#btnNext').click(function(){
     	currentPage = currentPage+1;
     	console.log('다음 버튼 클릭... currentPage : '+ currentPage);
@@ -163,36 +307,41 @@ $(document).ready(function(){
 	<h1>Member</h1>	
 <body>
     <table border="1">
-        <thead>
             <tr>
                 <th>id</th>
-                <th>pw</th>
-                <th>name</th>
-                <th>age</th>
-                <th>gender</th>
-                <th>추가</th>
-                <th>수정</th>
+                <td><input type="text" id="id"><br><span id="helper1"></span></td>
             </tr>
-        </thead>
-        <tbody>
             <tr>
-                <td><input type="text" id="id"></td>
-                <span id="helper1"></span>
-                <td><input type="password" id="pw"></td>
-                <td><input type="text" id="name"></td>
-                <td><input type="text" id="age"></td>
-                <td>
+            	<th>pw</th>
+            	<td><input type="password" id="pw"><br><span id="helper2"></span></td>
+            </tr>
+            <tr>
+            	<th>name</th>
+            	<td><input type="text" id="name"><br><span id="helper3"></span></td>
+            </tr>
+            <tr>
+            	<th>age</th>
+            	<td><input type="text" id="age"><br><span id="helper4"></span></td>
+            </tr>
+            <tr>
+            	<th>gender</th>
+            	<td>
                     <select id="gender">
+                    	<option value="">성별</option>
                         <option value="Male">남</option>
                         <option value="Female">여</option>
                     </select>
                 </td>
-                <td><button type="button" id="btnAdd">add</button></td>
-                <td><button type="button" id="btnModify">modify</button></td>
+            </tr>  
+            <tr>
+           		<th>추가</th>  
+           		<td><button type="button" id="btnAdd">add</button></td>
             </tr>
-        </tbody>
-    </table>
- 
+            <tr>
+            	<th>수정</th>
+            	<td><button type="button" id="btnModify">modify</button></td>
+            </tr>   
+    </table> 
     <button type="button" id="btnList">회원리스트</button>
     <button type="button" id="btnRemove">remove</button>
     <table border="1">
